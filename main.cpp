@@ -60,7 +60,7 @@ node *make_stak(string file) {
             }
             created->student.score.avg = sum / 5;
             created->prev = prev;
-            if (first!=created) {
+            if (first != created) {
                 prev->next = created;
             }
             current_index++;
@@ -75,21 +75,67 @@ void print_node(node *first) {
     node *cur;
     cur = first;
     cout << "Node queue\n";
-    while (cur->next != first) {
-        cout << cur->student.fio.surname << ' ' << cur->student.fio.name << '\n';
-        cur=cur->next;
+    while ( cur && cur->next != first) {
+        cout << cur->student.fio.surname << ' ' << cur->student.fio.name << ' ' << cur->student.score.avg << '\n';
+        cur = cur->next;
     }
-    cout << cur->student.fio.surname << ' ' << cur->student.fio.name << '\n';
+    if (cur)
+        cout << cur->student.fio.surname << ' ' << cur->student.fio.name << ' ' << cur->student.score.avg << '\n';
 
 }
+
+
+node *form_new_stak(node *lst) {
+    float score;
+    node *created = NULL, *first = NULL, *cur, *next = NULL;
+    cout << "¬ведите средний балл:\n";
+    cin >> score;
+    cur = lst;
+    while (cur->next != lst) {
+        if (cur->student.score.avg < score) {
+            next = created;
+            created = new node;
+            created->student = cur->student;
+            created->next = next;
+        }
+        cur = cur->next;
+    }
+    if (cur->student.score.avg < score) {
+        next = created;
+        created = new node;
+        created->student = cur->student;
+        created->next = next;
+    }
+    return created;
+}
+
+void write_to_file(string file, node* lst){
+    ofstream wfile;
+    node* cur;
+    wfile.open(file);
+    cur = lst;
+    while(cur){
+        wfile << cur->student.fio.name << ' ' <<cur->student.fio.surname << ' ' <<cur->student.fio.otchestvo <<' '<< cur->student.group << '\n';
+        wfile << cur->student.score.avg<<'\n';
+        cur=cur->next;
+    }
+
+}
+
 
 int main() {
     setlocale(LC_ALL, "Russian");
     string file;
-    node *list;
-      cin >> file;
-
+    node *list, *new_list;
+    cout<<"¬ведите название входного файла:\n";
+    cin >> file;
     list = make_stak(file);
     print_node(list);
+    new_list = form_new_stak(list);
+    cout<<"¬ведите название выходного файла:\n";
+    cin>> file;
+    print_node(new_list);
+    write_to_file(file, new_list);
+
     return 0;
 }
