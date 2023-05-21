@@ -43,30 +43,32 @@ node *make_stak(string file) {
     rfile.open(file);
     if (rfile) {
         rfile >> count;
-        while (current_index < count) {
-            prev = created;
-            created = new node;
-            if (!first) {
-                first = created;
+        if (count) {
+            while (current_index < count) {
+                prev = created;
+                created = new node;
+                if (!first) {
+                    first = created;
+                }
+                rfile >> created->student.fio.name;
+                rfile >> created->student.fio.surname;
+                rfile >> created->student.fio.otchestvo;
+                rfile >> created->student.group;
+                created->student.group = delete_n(created->student.group);
+                for (int i = 0; i < 5; i++) {
+                    rfile >> created->student.score.B[i];
+                    sum += created->student.score.B[i];
+                }
+                created->student.score.avg = sum / 5;
+                created->prev = prev;
+                if (first != created) {
+                    prev->next = created;
+                }
+                current_index++;
             }
-            rfile >> created->student.fio.name;
-            rfile >> created->student.fio.surname;
-            rfile >> created->student.fio.otchestvo;
-            rfile >> created->student.group;
-            created->student.group = delete_n(created->student.group);
-            for (int i = 0; i < 5; i++) {
-                rfile >> created->student.score.B[i];
-                sum += created->student.score.B[i];
-            }
-            created->student.score.avg = sum / 5;
-            created->prev = prev;
-            if (first != created) {
-                prev->next = created;
-            }
-            current_index++;
+            created->next = first;
+            first->prev = created;
         }
-        created->next = first;
-        first->prev = created;
     }
     return first;
 }
@@ -74,8 +76,8 @@ node *make_stak(string file) {
 void print_node(node *first) {
     node *cur;
     cur = first;
-    cout << "Node queue\n";
-    while ( cur && cur->next != first) {
+    cout << "Nodes list\n";
+    while (cur && cur->next != first) {
         cout << cur->student.fio.surname << ' ' << cur->student.fio.name << ' ' << cur->student.score.avg << '\n';
         cur = cur->next;
     }
@@ -109,15 +111,16 @@ node *form_new_stak(node *lst) {
     return created;
 }
 
-void write_to_file(string file, node* lst){
+void write_to_file(string file, node *lst) {
     ofstream wfile;
-    node* cur;
+    node *cur;
     wfile.open(file);
     cur = lst;
-    while(cur){
-        wfile << cur->student.fio.name << ' ' <<cur->student.fio.surname << ' ' <<cur->student.fio.otchestvo <<' '<< cur->student.group << '\n';
-        wfile << cur->student.score.avg<<'\n';
-        cur=cur->next;
+    while (cur) {
+        wfile << cur->student.fio.name << ' ' << cur->student.fio.surname << ' ' << cur->student.fio.otchestvo << ' '
+              << cur->student.group << '\n';
+        wfile << cur->student.score.avg << '\n';
+        cur = cur->next;
     }
 
 }
@@ -127,15 +130,20 @@ int main() {
     setlocale(LC_ALL, "Russian");
     string file;
     node *list, *new_list;
-    cout<<"¬ведите название входного файла:\n";
+    cout << "¬ведите название входного файла:\n";
     cin >> file;
     list = make_stak(file);
-    print_node(list);
-    new_list = form_new_stak(list);
-    cout<<"¬ведите название выходного файла:\n";
-    cin>> file;
-    print_node(new_list);
-    write_to_file(file, new_list);
+    if (list) {
+        print_node(list);
+        new_list = form_new_stak(list);
+        cout << "¬ведите название выходного файла:\n";
+        cin >> file;
+        print_node(new_list);
+        if(!new_list) cout << "—писок пустой";
+        write_to_file(file, new_list);
+    } else {
+        cout << "‘айл пустой или отсутвует";
+    }
 
     return 0;
 }
