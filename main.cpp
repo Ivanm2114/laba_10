@@ -73,6 +73,16 @@ node *make_stak(string file) {
     return first;
 }
 
+void delete_node(node *first){
+    node *temp, *cur=first;
+    while(cur && cur->next!=first){
+        temp = cur;
+        cur = cur->next;
+        delete temp;
+    }
+    cout << "Memory cleared\n";
+}
+
 void print_node(node *first) {
     node *cur;
     cur = first;
@@ -141,6 +151,8 @@ int main() {
         print_node(new_list);
         if(!new_list) cout << "Список пустой";
         write_to_file(file, new_list);
+        delete_node(new_list);
+        delete_node(list);
     } else {
         cout << "Файл пустой или отсутвует";
     }
