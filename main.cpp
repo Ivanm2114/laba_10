@@ -46,6 +46,7 @@ node *make_stak(string file) {
         if (count) {
             while (current_index < count) {
                 prev = created;
+                sum = 0;
                 created = new node;
                 if (!first) {
                     first = created;
@@ -54,7 +55,7 @@ node *make_stak(string file) {
                 rfile >> created->student.fio.surname;
                 rfile >> created->student.fio.otchestvo;
                 rfile >> created->student.group;
-                created->student.group = delete_n(created->student.group);
+                created->student.group = created->student.group;
                 for (int i = 0; i < 5; i++) {
                     rfile >> created->student.score.B[i];
                     sum += created->student.score.B[i];
